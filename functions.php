@@ -36,7 +36,7 @@ function vpw_style() {
     wp_enqueue_style('font-awesome.min', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css', [], '4.7.0');
     wp_enqueue_style('owl.carousel.min', 'https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css', [], '2.3.4');
     wp_enqueue_style('owl.theme.default', 'https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.css', [], '2.3.4');
-    wp_enqueue_style('main', get_template_directory_uri() . '/css/main.css', [], '220924.4');
+    wp_enqueue_style('main', get_template_directory_uri() . '/css/main.css', [], '221001.1');
 
     wp_enqueue_style('style', get_template_directory_uri() . '/style.css', [], '220930.1');
 		
@@ -53,7 +53,7 @@ add_action('login_head', 'vpw_admin_style');
 /* Thêm sidebar */
 if (function_exists('register_sidebar')) {
         register_sidebar(array(
-            'name'          => 'Trang chủ ',
+            'name'          => 'Homepage',
             'id'            => 'trangchu',
             'description'   => '',
             'before_widget' => '<div id="%1$s" class="%2$s"><div class="inner">',
@@ -63,7 +63,7 @@ if (function_exists('register_sidebar')) {
         ));
 
          register_sidebar(array(
-            'name'          => 'Chân trang 1',
+            'name'          => 'Footer 1',
             'id'            => 'footer1',
             'description'   => '',
             'before_widget' => '<div id="%1$s" class="%2$s footer-widget"><div class="inner">',
@@ -72,7 +72,7 @@ if (function_exists('register_sidebar')) {
             'after_title'   => '</h3>'
         ));   
         register_sidebar(array(
-            'name'          => 'Chân trang 2',
+            'name'          => 'Footer 2',
             'id'            => 'footer2',
             'description'   => '',
             'before_widget' => '<div id="%1$s" class="%2$s footer-widget"><div class="inner">',
@@ -81,7 +81,7 @@ if (function_exists('register_sidebar')) {
             'after_title'   => '</h3>'
         ));
         register_sidebar(array(
-            'name'          => 'Chân trang 3',
+            'name'          => 'Footer 3',
             'id'            => 'footer3',
             'description'   => '',
             'before_widget' => '<div id="%1$s" class="%2$s footer-widget"><div class="inner">',
@@ -90,7 +90,7 @@ if (function_exists('register_sidebar')) {
             'after_title'   => '</h3>'
         ));
         register_sidebar(array(
-            'name'          => 'Chân trang 4',
+            'name'          => 'Footer 4',
             'id'            => 'footer4',
             'description'   => '',
             'before_widget' => '<div id="%1$s" class="%2$s footer-widget"><div class="inner">',
@@ -99,7 +99,7 @@ if (function_exists('register_sidebar')) {
             'after_title'   => '</h3>'
         ));
         register_sidebar(array(
-            'name'          => 'Chân trang 5',
+            'name'          => 'Footer 5',
             'id'            => 'footer5',
             'description'   => '',
             'before_widget' => '<div id="%1$s" class="%2$s footer-widget"><div class="inner">',
@@ -415,6 +415,33 @@ function custom_breadcrumbs() {
        
 }
 
+// Hien flash sale theo %
+add_filter( 'woocommerce_sale_flash', 'ask_percentage_sale', 11, 3 );
+function ask_percentage_sale( $text, $post, $product ) {
+    $discount = 0;
+    if ( $product->get_type() == 'variable' ) {
+        $available_variations = $product->get_available_variations();								
+        $maximumper = 0;
+        for ($i = 0; $i < count($available_variations); ++$i) {
+            $variation_id=$available_variations[$i]['variation_id'];
+            $variable_product1= new WC_Product_Variation( $variation_id );
+            $regular_price = $variable_product1->get_regular_price();
+            $sales_price = $variable_product1->get_sale_price();
+            if( $sales_price ) {
+                $percentage= round( ( ( $regular_price - $sales_price ) / $regular_price ) * 100 ) ;
+                if ($percentage > $maximumper) {
+                    $maximumper = $percentage;
+                }
+            }        
+        }
+        $text = '<span class="onsale sale-percent">-' . $maximumper  . '%</span>';
+    } elseif ( $product->get_type() == 'simple' ) {
+        $percentage = round( ( ( $product->get_regular_price() - $product->get_sale_price() ) / $product->get_regular_price() ) * 100 );
+        $text = '<span class="onsale sale-percent">-' . $percentage . '%</span>';
+    }   
+
+    return $text;
+}
 
 function vpw_theme_woo() {
     // Declare WooTheme support

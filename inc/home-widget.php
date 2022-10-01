@@ -1,6 +1,27 @@
 <?php
 
 
+if(!function_exists('_the_entry_date'))
+{
+	function _the_entry_date()
+	{
+		$time_string = '<time class="entry-date published updated" datetime="%1$s">%2$s</time>';
+
+		if(get_the_time('U') !== get_the_modified_time('U'))
+		{
+			$time_string = '<time class="entry-date published" datetime="%1$s">%2$s</time><time class="updated hidden" datetime="%3$s">%4$s</time>';
+		}
+
+		printf($time_string,
+			esc_attr(get_the_date('c')),
+			get_the_date(),
+			esc_attr(get_the_modified_date('c')),
+			get_the_modified_date()
+		);
+	}
+}
+
+
 class ProductBox extends WP_Widget {
     function __construct() {
         parent::__construct(
@@ -15,8 +36,7 @@ class ProductBox extends WP_Widget {
     }
 
     function form( $instance ) {
-        $default = array(
-        );
+        $default = [];
         $instance = wp_parse_args( (array) $instance, $default );
     }
 
@@ -29,33 +49,42 @@ class ProductBox extends WP_Widget {
         extract($args);
         $wid = 'widget_' . $args['widget_id'];
         $title = get_field('title', $wid);
+        $slideshow = get_field('slideshow', $wid);
         $number = get_field('number', $wid);
         $category_id = get_field('category', $wid);
         $category = get_term_by('id', $category_id, 'product_cat');
-        $args = array(
+        $is_category = !empty($category) && !is_wp_error($category);
+        $args = [
             'posts_per_page' => $number,
-            'product_cat' =>$category->slug,
             'post_type' => 'product',
             'orderby' => 'id', 
-        );
-        $products = new WP_Query( $args );
+        ];
+        $link = 'javascript:;';
+        if($is_category) {
+            $args['product_cat'] = $category->slug;
+            $link = get_term_link($category);
+        }
+        $products = new WP_Query($args);;
         ?>
-            <div class="product_box_widget <?= $wid ?>">
-                <h2 class="heading"><?= $title ?></h2>
-                <div class="product_box_content row">
+            <section class="myblock widget product_box_widget <?= $wid ?>">
+                <div class="widget-header">
+                    <h2 class="widget-title heading"><a href="<?= $link ?>"></a><?= $title ?></h2>
+                    <div class="btns"><a href="<?= $link ?>" class="btn btn-default"><?= __('Xem tất cả', 'vpw_theme') ?></a></div>
+                </div>
+                <div class="widget-content <?= (($slideshow != true)? 'row row-sm row-list' : 'owl-carousel owl-theme" data-dots="true" data-items="5" data-items-lg="5" data-items-md="4') ?>">
                     <?php
                     if($products->have_posts()) {
                     while( $products->have_posts() ) {
                             $products->the_post();
                     ?>
-                    <div class="col-md-3 col-sm-4 col-xs-6">
+                    <div class="item <?= (($slideshow != true)? 'col-md-15 col-sm-4 col-xs-6' : '') ?>">
                         <?php wc_get_template_part( 'content', 'product' ); ?>
                     </div>
                         <?php
                         }
                     } ?>
                 </div>
-            </div><!-- #product_box_<?= $args['widget_id'] ?> -->
+            </section><!-- #<?= $wid ?> -->
         <?php
 
     }
@@ -70,7 +99,7 @@ class NewsBox extends WP_Widget {
     function __construct() {
         parent::__construct(
         'NewsBox',
-        'BOX TIN TỨC',
+        'News Box',
         array( 'description'  =>  'Widget hiển thị bài viết theo chuyên mục' )
         );
         add_action('widgets_init', function() {
@@ -79,8 +108,7 @@ class NewsBox extends WP_Widget {
     }
 
     function form( $instance ) {
-        $default = array(
-        );
+        $default = [];
         $instance = wp_parse_args( (array) $instance, $default );
     }
     function update( $new_instance, $old_instance ) {
@@ -92,82 +120,55 @@ class NewsBox extends WP_Widget {
         $wid = 'widget_' . $args['widget_id'];
         $title = get_field('title', $wid);
         $description = get_field('description', $wid);
-        $post_number = get_field('so_luong', $wid);
-        $cat = get_field('danh_muc', $wid);
-        $args2 = array(
-        'posts_per_page' => $post_number,
-        'cat' => $cat,
-        'orderby' => 'id',
+        $number = get_field('number', $wid);
+        $category_id = get_field('category', $wid);
+        $category = get_category($category_id);
+        $args = array(
+            'posts_per_page' => $number,
+            'cat' => $category->slug,
+            'orderby' => 'id',
         );
-        $tintuc = new WP_Query( $args2 );
+        $posts = new WP_Query( $args );
         ?>
-        <section>
-        <div>
-            <a href="<?= get_category_link($cat)?>"><h3><?= $title ?></h3></a>
-            <?= $description ?>
-            </div>
-            <div>
-                <div class="owl-carousel" data-lg-items='3' data-md-items='3' data-sm-items='2' data-xs-items="2" data-nav="true">
-                
+        <section class="myblock widget new_box_widget <?= $wid ?>">
+            <header class="widget-header">
+                <h2 class="widget-title heading"><a href="<?= get_category_link($category)?>"><?= $title ?></a></h2>
+                <div class="descriprion"><?= $description ?></div>
+            </header>
+            <div class="row row-list">
                 <?php
-                if ($tintuc->have_posts()):
-                while( $tintuc->have_posts() ) :
-                $tintuc->the_post();
+                if ($posts->have_posts()):
+                while( $posts->have_posts()):
+                    $posts->the_post();
                 ?>
-                <article class="blog-item text-center">
-                <div>
-                    <div class="blog-item-thumbnail">           
-                    <a href="<?php the_permalink()?>">
-                        
-                        <img src="<?php the_post_thumbnail_url('size470')?>" alt="<?php the_title()?>">
-                        
-                    </a>
+                    <div class="item col-md-3 col-xs-6">
+                        <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+                            <?php
+                                if(has_post_thumbnail()) echo '<div class="post-image"><a href="'.get_permalink().'" class="thumb resize">'.get_the_post_thumbnail(get_the_ID(), 'medium').'</a></div>';
+                            ?>
+                            <div class="article-content">
+                                <header class="entry-header">
+                                    <?php the_title('<h3 class="entry-title"><a href="'.esc_url(get_permalink()).'" rel="bookmark">', '</a></h3>'); ?>
+                                </header><!-- .entry-header -->
+                                <div class="entry-meta small clearfix">
+                                    <strong class="hidden"><span class="vcard author"><span class="fn"><?php the_author() ?></span></span></strong>
+                                    <i><?php _the_entry_date() ?></i>
+                                    <span class="hidden">
+                                        | <span class="post-terms"><span class="item"><?php the_category('</span><span class="term-item">, '); ?></span></span> <span class="post-tags"><?php the_tags(' | '); ?></span>
+                                    </span>
+                                </div><!-- entry-meta -->
+                                <div class="entry-content">
+                                    <?php the_excerpt(); ?>
+                                </div><!-- .entry-content -->
+                                <div class="readmore text-right"><a href="<?php the_permalink() ?>"><i class="fa fa-angle-right"></i> <?php _e('Read more') ?></a></div>
+                            </div>
+                        </article><!-- #post-## -->
                     </div>
-                    <div class="blog-item-info m-4">
-                    <h3 class="blog-item-name"><a style="color:#008141" href="<?php the_permalink()?>"><?php the_title()?></a></h3>
-                    <p class="blog-item-summary"><?= get_the_excerpt()?></p>
-                    
-                    </div>
-                </div>
-                </article>
-                
                 <?php
                 endwhile;
                 endif; ?>
-
-            </div>
-            </div>
+            </div><!-- .new_box_widget_# -->
         </section>
-        <!--<div>
-            <div class="deal">
-                <div class="news-title clearfix">
-                
-                </div>
-                <div >
-                    <div>
-                    <?php
-                    if ($tintuc->have_posts()):
-                    while( $tintuc->have_posts() ) :
-                    $tintuc->the_post();
-                    ?>
-                        <div class="blog owl-carousel " data-lg-items="3" data-md-items="3" data-xs-items="2" data-nav="true">
-                            <div class="product-thumbnail">
-                                <a href="<?php the_permalink()?>">
-                                    <img src="<?php the_post_thumbnail_url('size200')?>" alt="<?php the_title()?>">
-                                </a>
-                            </div>
-                            <div class="news-info ">
-                                    <a href="<?php the_permalink()?>"><h2><?php the_title()?></h2></a>
-                                <p><?= get_the_excerpt()?></p>
-                            </div>
-                            <div class="clearfix"></div>
-                        </div>
-                        <?php endwhile;endif; ?>
-                    </div>
-        
-                </div>
-            </div>
-        </div>-->
         <?php
     }
 }
@@ -192,7 +193,6 @@ class BannerBox extends WP_Widget {
     function form( $instance ) {
         $default = [];
         $instance = wp_parse_args( (array) $instance, $default );
-        $title = esc_attr($instance['title']);
     }
 
     function update( $new_instance, $old_instance ) {
@@ -203,17 +203,22 @@ class BannerBox extends WP_Widget {
         extract($args);
         $widgetClass = 'widget_'.$args['widget_id'];
         ?>
-        <div class="banners <?= $widgetClass ?>">
+        <div class="myblock widget banner_widget <?= $widgetClass ?>">
             <div class="row">
                 <?php
                     if( have_rows('banner','option') ) {
                     while ( have_rows('banner','option') )  {
                         the_row();
+                        $img = get_sub_field('image');
+                        $desc = get_sub_field('description');
+                        $link = get_sub_field('link');
                 ?>
                 <div class="item col-sm-6">
-                        <figure class="thumb resize">
-                            <img src="<?php the_sub_field('image') ?>" alt="<?php esc_attr(the_sub_field('description')) ?>" />
-                            <figcaption><?= the_sub_field('description') ?></figcaption>
+                        <figure>
+                            <a href="<?= $link ?>">
+                                <img src="<?= $img ?>" alt="<?= esc_attr($desc) ?>" />
+                                <figcaption><?= $desc ?></figcaption>
+                            </a>
                         </figure>
                 </div>
                 
@@ -243,8 +248,7 @@ class InfomationBox extends WP_Widget {
 		});
     }
     function form( $instance ) {
-        $default = array(
-        );
+        $default = [];
         $instance = wp_parse_args( (array) $instance, $default );
     }
     function update( $new_instance, $old_instance ) {
@@ -260,7 +264,7 @@ class InfomationBox extends WP_Widget {
         $link = get_field('link', $wid);
         $link_text = get_field('link_text', $wid);
         ?>
-        <section class="myblock section_textbox <?= $wid ?>">
+        <section class="myblock widget textbox_widget <?= $wid ?>">
             <div class="inner row">
                 <?php if($image) { ?>
                     <div class="textbox-img col-xs-12"><img src="<?= esc_url($image) ?>" alt="<?= esc_attr($title) ?>" /></div>
@@ -295,8 +299,7 @@ class TextmultiBox extends WP_Widget {
 		});
     }
     function form( $instance ) {
-        $default = array(
-        );
+        $default = [];
         $instance = wp_parse_args( (array) $instance, $default );
     }
     function update( $new_instance, $old_instance ) {
@@ -307,29 +310,18 @@ class TextmultiBox extends WP_Widget {
         extract($args);
         $wid = 'widget_' . $widget_id;
         if( have_rows('text_multi', $wid) ) { ?>
-            <section class="myblock section_textmultibox <?= $wid ?>">
+            <section class="myblock widget <?= $wid ?>">
                 <div class="inner row">
                     <?php
                     while ( have_rows('text_multi', $wid) )  {
                         the_row();
                         $title = get_sub_field('title');
                         $description = get_sub_field('description');
-                        $image = get_sub_field('image');
-                        $link = get_sub_field('link');
-                        $link_text = get_sub_field('link_text');
                     ?>
                         <div class="item col-xs-12">
-                            <div class="row">
-                                <?php if($image) { ?>
-                                    <div class="textbox-img col-xs-12"><img src="<?= esc_url($image) ?>" alt="<?= esc_attr($title) ?>" /></div>
-                                <?php } ?>
-                                <div class="textbox-intro col-xs-12">
-                                    <div class="textbox-intro-inner">
-                                        <?php if($title) { ?><h2 class="textbox-title"><?= $title ?></h2><?php } ?>
-                                        <div class="textbox-desc"><?= $description ?></div>
-                                    </div>
-                                    <?php if($link) { ?><div class="btns"><a href="<?= esc_url($link) ?>" class="btn btn-warning"><?= $link_text ?></a></div><?php } ?>
-                                </div>
+                            <div class="textbox-intro-inner">
+                                <?php if($title) { ?><h2 class="textbox-title"><?= $title ?></h2><?php } ?>
+                                <div class="textbox-desc"><?= $description ?></div>
                             </div>
                         </div>
                     <?php } // while ?>
