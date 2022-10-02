@@ -71,7 +71,7 @@ class ProductBox extends WP_Widget {
                     <h2 class="widget-title heading"><a href="<?= $link ?>"></a><?= $title ?></h2>
                     <div class="btns"><a href="<?= $link ?>" class="btn btn-default"><?= __('Xem tất cả', 'vpw_theme') ?></a></div>
                 </div>
-                <div class="widget-content <?= (($slideshow != true)? 'row row-sm row-list' : 'owl-carousel owl-theme" data-dots="true" data-items="5" data-items-lg="5" data-items-md="4') ?>">
+                <div class="widget-content product-list <?= (($slideshow != true)? 'row row-sm row-list' : 'owl-carousel owl-theme" data-dots="true" data-items="5" data-items-lg="5" data-items-md="4') ?>">
                     <?php
                     if($products->have_posts()) {
                     while( $products->have_posts() ) {

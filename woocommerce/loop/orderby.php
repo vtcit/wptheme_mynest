@@ -21,10 +21,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 ?>
 <div class="shop-grid-controls clearfix">
-    <div class="grid-controls-btns hidden-md hidden-sm hidden-xs hidden">
-        <a href="javascript:;" id="grid-view" class="grid-view active" data-toggle="tooltip" title="" data-original-title="Grid"><i class="fa fw fa-2x fa-th"></i>
+    <div class="grid-controls-btns hidden-sm hidden-xs ">
+        <a href="javascript:;" data-active="grid-view" class="active" title="Grid"><i class="fa fw fa-2x fa-th"></i>
         </a>
-        <a href="javascript:;" id="list-view" class="list-view" data-toggle="tooltip" title="" data-original-title="List"><i class="fa fw fa-2x fa-list"></i>
+        <a href="javascript:;" data-active="list-view" title="List"><i class="fa fw fa-2x fa-list"></i>
         </a>
     </div>
     <div class="grid-controls-drop">

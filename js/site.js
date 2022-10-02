@@ -1,6 +1,10 @@
 jQuery(function ($) {
     function owlGetArgs(ele) {
-        var items = $(ele).data("items") || 4;
+        var items = $(ele).data("items") || 1;
+        var items_lg = $(ele).data("items-lg") || items;
+        var items_md = $(ele).data("items-md") || 1;
+        var items_sm = $(ele).data("items-sm") || 1;
+        var items_xs = $(ele).data("items-xs") || 1;
         var margin = $(ele).data("margin") || 0;
         var stagepadding = $(ele).data("stagepadding") || 0;
         var loop = $(ele).data("loop") || true;
@@ -26,13 +30,16 @@ jQuery(function ($) {
             ],
             responsive: {
                 0: {
-                    items: 1,
+                    items: items_xs,
                 },
-                769: {
-                    items: items % 2,
+                768: {
+                    items: items_sm,
                 },
-                993: {
-                    items: items,
+                992: {
+                    items: items_md,
+                },
+                1200: {
+                    items: items_lg,
                 },
             },
         };
@@ -70,5 +77,12 @@ jQuery(function ($) {
             $(parent_id + ' a[data-toggle="tab"]').removeClass("active");
         }
         $(this).addClass("active");
+    });
+    $(".grid-controls-btns > a").click(function () {
+        $(".grid-controls-btns > a").removeClass("active");
+        $(this).addClass("active");
+        $(".product-list")
+            .removeClass(["list-view", "grid-view"])
+            .addClass($(this).data("active"));
     });
 });

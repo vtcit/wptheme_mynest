@@ -42,11 +42,10 @@ get_header( 'shop' );
 
 <div class="container">
 	<div class="row">
-		<div class="col-md-3 hidden-xs hidden-sm">
+		<div class="col-md-2  col-sm-3 hidden-x">
 			<?php get_sidebar() ?>
 		</div>
-		<div class="col-md-9 archive-product-main">
-
+		<div class="col-md-10 col-sm-9">
 			<?php
 			if ( woocommerce_product_loop() ) {
 			
@@ -69,7 +68,7 @@ get_header( 'shop' );
 						 * Hook: woocommerce_shop_loop.
 						 */
 						do_action( 'woocommerce_shop_loop' );
-						echo '<div class="product-wrapper clearfix">';
+						echo '<div class="item col-md-3 col-xs-6">';
 						wc_get_template_part( 'content', 'product' );
 						echo '</div>';
 					}

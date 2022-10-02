@@ -21,32 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 get_header( 'shop' ); ?>
 
-	<div class="breadcrumbs">
-		<div class="container">
-			<?php echo custom_breadcrumbs() ?>
-		</div>
-	</div>
-	<header class="woocommerce-products-header">
-		<div class="container">
-			<div class="row">
-				<div class="col-md-4 category-info__text">
-					<?php if ( apply_filters( 'woocommerce_show_page_title', true ) ) : ?>
-						<div class="page-title-wrapper"><h1 class="woocommerce-products-header__title page-title"><?php woocommerce_page_title(); ?></h1></div>
-					<?php endif; ?>
-				</div>
-				<div class="col-md-8 category-description">
-					<?php do_action( 'woocommerce_product_description' ); ?>
-				</div>
-			</div>
-		</div>
-	</header>
-
-	<div class="container">
-		<div class="row">
-			<div class="col-md-3 hidden-xs hidden-sm">
-				<?php get_sidebar() ?>
-			</div>
-			<div class="col-md-9 archive-product-main">
+	<div class="container container-main">
 		<?php
 			/**
 			 * woocommerce_before_main_content hook.
@@ -82,8 +57,6 @@ get_header( 'shop' ); ?>
 			do_action( 'woocommerce_sidebar' );
 		?>
 
-	</div><!-- category-main  -->
-		</div><!-- row -->
 	</div><!-- container main -->
 <?php
 get_footer( 'shop' );

@@ -3,6 +3,7 @@
  * Register Custom Navigation Walker
  */
 
+
 defined('_DOMAIN_TEXT_DOMAIN') or define('_DOMAIN_TEXT_DOMAIN', 'vpw_theme');
 function register_navwalker() {
 	require_once get_template_directory() . '/libs/wp_bootstrap_navwalker.php';
@@ -38,7 +39,7 @@ function vpw_style() {
     wp_enqueue_style('owl.theme.default', 'https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.css', [], '2.3.4');
     wp_enqueue_style('main', get_template_directory_uri() . '/css/main.css', [], '221001.1');
 
-    wp_enqueue_style('style', get_template_directory_uri() . '/style.css', [], '220930.1');
+    wp_enqueue_style('style', get_template_directory_uri() . '/style.css', [], '221003.1');
 		
 }
 add_action('wp_enqueue_scripts', 'vpw_style');
@@ -52,14 +53,42 @@ add_action('admin_enqueue_scripts', 'vpw_admin_style');
 add_action('login_head', 'vpw_admin_style');
 /* Thêm sidebar */
 if (function_exists('register_sidebar')) {
+    register_sidebar(array(
+        'name'          => 'Homepage',
+        'id'            => 'trangchu',
+        'description'   => '',
+        'before_widget' => '<div id="%1$s" class="%2$s"><div class="inner">',
+        'after_widget'  => '</div></div>',
+        'before_title'  => '<h2 class="heading widget-heading">',
+        'after_title'   => '</h2>'
+    ));
+    register_sidebar(array(
+        'name'          => 'Sidebar',
+        'id'            => 'sidebar',
+        'description'   => '',
+        'before_widget' => '<div id="%1$s" class="%2$s"><div class="inner">',
+        'after_widget'  => '</div></div>',
+        'before_title'  => '<h2 class="heading widget-heading">',
+        'after_title'   => '</h2>'
+    ));
+
         register_sidebar(array(
-            'name'          => 'Homepage',
-            'id'            => 'trangchu',
+            'name'          => 'promotion_sale',
+            'id'            => 'promotion_sale',
             'description'   => '',
             'before_widget' => '<div id="%1$s" class="%2$s"><div class="inner">',
             'after_widget'  => '</div></div>',
             'before_title'  => '<h2 class="heading widget-heading">',
             'after_title'   => '</h2>'
+        ));
+        register_sidebar(array(
+            'name'          => 'after_product_image',
+            'id'            => 'after_product_image',
+            'description'   => '',
+            'before_widget' => '<div id="%1$s" class="%2$s after_product_image-widget"><div class="inner">',
+            'after_widget'  => '</div></div>',
+            'before_title'  => '<h3 class="heading widget-heading">',
+            'after_title'   => '</h3>'
         ));
 
          register_sidebar(array(
@@ -183,15 +212,12 @@ function _add_star_rating() {
             echo '<i class="fa fa-star-o"></i>';
         }
         echo '</div>';
-
 }
- 
 add_action('woocommerce_shop_loop_item_title', '_add_star_rating' );
-
 
 // Breadcrumbs
 function custom_breadcrumbs() {
-       
+
     // Settings
     $separator          = ' —› ';
     $breadcrums_id      = 'breadcrumb';
