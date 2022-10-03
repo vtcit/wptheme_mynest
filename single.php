@@ -1,70 +1,38 @@
-<?php
-
-/**
-
-* Template : Chi tiết
-
-*/
-$categories = get_the_category($post->ID);
-basix_setPostViews($post->ID);
-
-?>
-
-<?php get_header();the_post();?>
-
-<div class="breadcrumbs">
-    <div class="container">
-        <h2 class="category-name"><?php echo $categories[0]->name; ?></h2>
-        <?php echo custom_breadcrumbs() ?>
-    </div>
-</div>
-
-
-<div class="container">
-<div class="">
-<div id="column-left" class="col-sm-3 col-md-3 col-lg-3 col-xs-12 hidden-xs hidden-sm">
-    <?php get_sidebar()?>
-</div>
-<div id="content" class="col-xs-12 col-sm-12 col-md-9 col-lg-9">
-
-    <div class="content_detail">
-        <h1><?php the_title(); ?></h1>
-        <time><i>Đăng ngày : <?php the_time('d-m-Y')?></i></time>
-        <?php the_content()?>
-        <?php
-        $categories = get_the_category($post->ID);
-        $args = array( 'posts_per_page' =>14,'orderby'=>'rand', 'offset'=> 1, 'category' => $categories['0']->term_id );
-        $myposts = get_posts( $args );
-        if($myposts){
-        ?>
-
-        <div class="block-newsOther">
-        <h3>Bài viết liên quan:</h3>
-        <div class="row">
-        <?php foreach ( $myposts as $post ) : setup_postdata( $post ); ?>
-
-        <div class="col-xs-12">
-        <h4>
-        <a href="<?php the_permalink()?>" target="_self" title="<?php the_title()?>">
-        <i class="fa fa-chevron-right" aria-hidden="true">
-        </i> <?php the_title()?></a></h4>
-        </div>
-        <?php endforeach;  wp_reset_postdata();?>
-
-
-        </div>
-        </div>
-
-
-        <?php } ?>
-
-    </div>
-</div>
-</div>
-</div>
-
-
+<?php get_header(); ?>
+<div class="breadcrumbs clearfix">
+	<div class="container">
+		<ol class="breadcrumb" itemprop="breadcrumb">
+			<li><a href="<?php echo esc_url(home_url('/')); ?>"><span class="fa fa-home"></span><span class="sr-only"> <?php _e('Home', 'leo_blog') ?></span></a></li>
+			<?php
+			$categories = get_the_category();
+			if(!empty($categories))
+			{
+				foreach($categories as $cat)
+				{
+			?>
+				<li class="term-item" typeof="v:Breadcrumb"><a href="<?php echo esc_url(get_category_link($cat->term_id)) ?>" rel="v:url" property="v:title"><?php echo esc_html($cat->name) ?></a></li>
+			<?php
+				}
+			} ?>
+		</ol>
+	</div>
+</div><!-- breadcrumbs -->
+<main id="main">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8">
+			<?php
+				while(have_posts())
+				{
+					the_post();
+					get_template_part('template-parts/post/content', get_post_format());
+				}
+			?>
+			<div class="col-md-4">
+				<?php get_sidebar() ?>
+			</div>
+		</div>
+	</div><!-- .container -->
+</main>
 
 <?php get_footer(); ?>
-
-

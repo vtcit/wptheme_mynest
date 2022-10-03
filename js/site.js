@@ -59,12 +59,15 @@ jQuery(function ($) {
             $(this).removeClass("open");
         }
     );
-    $(".dropdown-menu, #primary-menu-list").on("shown.bs.dropdown", () =>
+    $("#primary-menu-list").on("shown.bs.collapse", () =>
         $(".droplet").addClass("show")
     );
-    $(".dropdown-menu, #primary-menu-list").on("hidden.bs.dropdown", () =>
+    $("#primary-menu-list").on("hidden.bs.collapse", () =>
         $(".droplet").removeClass("show")
     );
+    $(".droplet").click(function () {
+        $("#primary-menu-list").collapse("hide");
+    });
 
     if ($(".owl-carousel").length > 0) {
         $(".owl-carousel").each(function () {

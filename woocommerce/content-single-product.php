@@ -68,9 +68,9 @@ if ( post_password_required() ) {
 				?>
 				<?php woocommerce_template_single_title(); ?>
 				<div class="product-meta">
-					<?php woocommerce_template_single_rating() ?>
-					Thương hiệu: Mynest
-					Xuất xứ: Khánh hòa
+					<span class="product-meta-item"><?php echo _add_star_rating(); // woocommerce_template_single_rating() ?></span>
+					<span class="product-meta-item">Thương hiệu: <span>Mynest</span></span>
+					<span class="product-meta-item">Xuất xứ: <span>Phan Rang & Qui Nhơn</span></span>
 				</div><!-- product-meta -->
 				<div class="row">
 					<div class="col-md-8">
@@ -85,7 +85,7 @@ if ( post_password_required() ) {
 							dynamic_sidebar('bottom_single_product_summary');
 						?>
 					</div>
-					<div class="col-md-4">
+					<div class="col-md-4 right_single_product_summary">
 						<?php dynamic_sidebar('right_single_product_summary'); ?>
 					</div>
 				</div>

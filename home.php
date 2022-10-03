@@ -38,7 +38,7 @@
     </div>
 </div>
 
-<div class="container home-sidebar">
+<div class="container home-sidebar woocommerce">
     <?php dynamic_sidebar('trangchu'); ?>
 </div>
 <!-- product_menu_list -->

@@ -26,7 +26,6 @@ $logo = get_field('logo','option');
 <body <?php   if(is_front_page()){ echo body_class('common-home woocommerce'); } else{ echo body_class(); } ?>>
 <div class="wrapper">
     <header>
-
         <div class="top" id="top">
             <div class="container text-right hidden">
             </div><!-- container -->
@@ -54,10 +53,10 @@ $logo = get_field('logo','option');
                                 <a data-toggle="dropdown" href=""><i class="fa fw fa-2x fa-user-o"></i> <span class="caret hidden"></span></a>
                                 <ul class="dropdown-menu">
                                     <?php if (is_user_logged_in()) : ?>
-                                        <li><a class="logout-link" href="<?php echo wp_logout_url(get_permalink()); ?>"><?= __('Logout') ?></a></li>
+                                        <li class="myaccount-link"><a href="<?php echo get_permalink( get_option('woocommerce_myaccount_page_id') ); ?>" title="<?php _e('My Account','woothemes'); ?>"><?php _e('My Account','woothemes'); ?></a></li>
+                                        <li class="logout-link"><a href="<?php echo wp_logout_url(get_permalink()); ?>"><?= __('Logout') ?></a></li>
                                     <?php else: ?>
-                                        <li><a class="regiter-link" href="<?php echo wp_login_url(get_permalink()); ?>"><?= __('Register') ?></a></li>
-                                        <li><a class="login-link" href="<?php echo wp_login_url(get_permalink()); ?>"><?= __('Login') ?></a></li>
+                                        <a href="<?php echo get_permalink( get_option('woocommerce_myaccount_page_id') ); ?>" title="<?php _e('Login / Register','woothemes'); ?>"><?php _e('Login / Register','woothemes'); ?></a>
                                     <?php endif; ?>
                                 </ul>
                             </div>
@@ -77,7 +76,7 @@ $logo = get_field('logo','option');
                     </div>
                 </div><!-- .row -->
             </div><!-- container -->
-        </div>
+        </div><!-- middle-area -->
 
         <!-- NAV MENU -->
 		<div class="mainnav">
@@ -102,7 +101,7 @@ $logo = get_field('logo','option');
                                             'theme_location' => 'primary',
                                             'items_wrap'	 => '<a data-toggle="collapse" href="#primary-menu-list" aria-expanded="true" aria-controls="primary-menu-list">
                                                 <i class="fa fw fa-bars"></i> &nbsp; Danh Mục Sản Phẩm <i class="fa fa-chevron-down arrow"></i></a>
-                                                <div class="collapse'.((is_front_page())? ' in' : '').'" id="primary-menu-list"><ul class="%1$s %2$s list-unstyled"> %3$s </ul></div>',
+                                                <div class="collapse'.((is_page_template( 'home.php' ))? ' in' : '').'" id="primary-menu-list"><ul class="%1$s %2$s list-unstyled"> %3$s </ul></div>',
                                             'container' => 'div',
                                             'container_id' => 'primary-menu',
                                             'fallback_cb' => 'WP_Bootstrap_Navwalker::fallback',
@@ -137,7 +136,6 @@ $logo = get_field('logo','option');
 				</div>
 			</nav>
 		</div><!-- .mainnav -->
-
     </header>
     <div class="droplet"></div>
 

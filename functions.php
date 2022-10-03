@@ -31,7 +31,7 @@ function vpw_style() {
     wp_enqueue_script('jquery');
     wp_enqueue_script('owl.carousel.min', 'https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js', null, '2.3.4', true);
     wp_enqueue_script('bootstrap.min', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js', null, '3.3.7', true);
-    wp_enqueue_script('site', get_template_directory_uri() . '/js/site.js', null, '220930.2', true);
+    wp_enqueue_script('site', get_template_directory_uri() . '/js/site.js', null, '221003.3', true);
 
     wp_enqueue_style('bootstrap.min', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css', [], '3.3.7');
     wp_enqueue_style('font-awesome.min', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css', [], '4.7.0');
@@ -39,7 +39,7 @@ function vpw_style() {
     wp_enqueue_style('owl.theme.default', 'https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.css', [], '2.3.4');
     wp_enqueue_style('main', get_template_directory_uri() . '/css/main.css', [], '221001.1');
 
-    wp_enqueue_style('style', get_template_directory_uri() . '/style.css', [], '221003.1');
+    wp_enqueue_style('style', get_template_directory_uri() . '/style.css', [], '221003.2');
 		
 }
 add_action('wp_enqueue_scripts', 'vpw_style');
@@ -73,19 +73,28 @@ if (function_exists('register_sidebar')) {
     ));
 
         register_sidebar(array(
-            'name'          => 'promotion_sale',
+            'name'          => 'Promotion Sale Woocommerce',
             'id'            => 'promotion_sale',
-            'description'   => '',
+            'description'   => 'Promotion Sale for Woocommerce, displayed after excerpt of product',
             'before_widget' => '<div id="%1$s" class="%2$s"><div class="inner">',
             'after_widget'  => '</div></div>',
             'before_title'  => '<h2 class="heading widget-heading">',
             'after_title'   => '</h2>'
         ));
         register_sidebar(array(
-            'name'          => 'after_product_image',
+            'name'          => 'After Product Image Woocommerce',
             'id'            => 'after_product_image',
             'description'   => '',
             'before_widget' => '<div id="%1$s" class="%2$s after_product_image-widget"><div class="inner">',
+            'after_widget'  => '</div></div>',
+            'before_title'  => '<h3 class="heading widget-heading">',
+            'after_title'   => '</h3>'
+        ));
+        register_sidebar(array(
+            'name'          => 'Right single product summary Woocommerce',
+            'id'            => 'right_single_product_summary',
+            'description'   => '',
+            'before_widget' => '<div id="%1$s" class="%2$s right_single_product_summary-widget"><div class="inner">',
             'after_widget'  => '</div></div>',
             'before_title'  => '<h3 class="heading widget-heading">',
             'after_title'   => '</h3>'
@@ -216,13 +225,13 @@ function _add_star_rating() {
 add_action('woocommerce_shop_loop_item_title', '_add_star_rating' );
 
 // Breadcrumbs
-function custom_breadcrumbs() {
+function custom_breadcrumbs1() {
 
     // Settings
     $separator          = ' —› ';
     $breadcrums_id      = 'breadcrumb';
     $breadcrums_class   = 'breadcrumb';
-    $home_title         = 'Home';
+    $home_title         = __('Homepage');
       
     // If you have any custom post types with custom taxonomies, put the taxonomy name below (e.g. product_cat)
     $custom_taxonomy    = 'product_cat';
@@ -254,7 +263,7 @@ function custom_breadcrumbs() {
                 $post_type_object = get_post_type_object($post_type);
                 $post_type_archive = get_post_type_archive_link($post_type);
               
-                echo '<li class="item-cat item-custom-post-type-' . $post_type . '"><a class="bread-cat bread-custom-post-type-' . $post_type . '" href="' . $post_type_archive . '" title="' . $post_type_object->labels->name . '">' . $post_type_object->labels->name . '</a></li>';
+                if(!empty($post_type_object) || !empty($post_type_archive)) echo '<li class="item-cat item-custom-post-type-' . $post_type . '"><a class="bread-cat bread-custom-post-type-' . $post_type . '" href="' . $post_type_archive . '" title="' . $post_type_object->labels->name . '">' . $post_type_object->labels->name . '</a></li>';
                 
               
             }
@@ -273,7 +282,7 @@ function custom_breadcrumbs() {
                 $post_type_object = get_post_type_object($post_type);
                 $post_type_archive = get_post_type_archive_link($post_type);
               
-                echo '<li class="item-cat item-custom-post-type-' . $post_type . '"><a class="bread-cat bread-custom-post-type-' . $post_type . '" href="' . $post_type_archive . '" title="' . $post_type_object->labels->name . '">' . $post_type_object->labels->name . '</a></li>';
+                if(!empty($post_type_object) || !empty($post_type_archive)) echo '<li class="item-cat item-custom-post-type-' . $post_type . '"><a class="bread-cat bread-custom-post-type-' . $post_type . '" href="' . $post_type_archive . '" title="' . $post_type_object->labels->name . '">' . $post_type_object->labels->name . '</a></li>';
                 
               
             }

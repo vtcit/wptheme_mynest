@@ -52,5 +52,5 @@ $wrapper_classes   = apply_filters(
 		do_action( 'woocommerce_product_thumbnails' );
 		?>
 	</figure>
-	<?php dynamic_sidebar('after_product_image'); ?>
 </div>
+<?php dynamic_sidebar('after_product_image'); ?>

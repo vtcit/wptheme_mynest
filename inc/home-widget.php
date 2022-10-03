@@ -53,7 +53,7 @@ class ProductBox extends WP_Widget {
         $number = get_field('number', $wid);
         $category_id = get_field('category', $wid);
         $category = get_term_by('id', $category_id, 'product_cat');
-        $is_category = !empty($category) && !is_wp_error($category);
+        $is_category = (!empty($category) && !is_wp_error($category));
         $args = [
             'posts_per_page' => $number,
             'post_type' => 'product',
@@ -68,7 +68,7 @@ class ProductBox extends WP_Widget {
         ?>
             <section class="myblock widget product_box_widget <?= $wid ?>">
                 <div class="widget-header">
-                    <h2 class="widget-title heading"><a href="<?= $link ?>"></a><?= $title ?></h2>
+                    <h2 class="widget-title heading"><a href="<?= $link ?>"><?= $title ?></a></h2>
                     <div class="btns"><a href="<?= $link ?>" class="btn btn-default"><?= __('Xem tất cả', 'vpw_theme') ?></a></div>
                 </div>
                 <div class="widget-content product-list <?= (($slideshow != true)? 'row row-sm row-list' : 'owl-carousel owl-theme" data-dots="true" data-items="5" data-items-lg="5" data-items-md="4') ?>">
@@ -131,42 +131,22 @@ class NewsBox extends WP_Widget {
         $posts = new WP_Query( $args );
         ?>
         <section class="myblock widget new_box_widget <?= $wid ?>">
-            <header class="widget-header">
+            <div class="widget-header">
                 <h2 class="widget-title heading"><a href="<?= get_category_link($category)?>"><?= $title ?></a></h2>
-                <div class="descriprion"><?= $description ?></div>
-            </header>
-            <div class="row row-list">
+                <div class="btns hidden"><a href="<?= get_category_link($category)?>" class="btn btn-default"><?= __('Xem tất cả', 'vpw_theme') ?></a></div>
+            </div>
+            <div class="row row-list post-list">
                 <?php
-                if ($posts->have_posts()):
-                while( $posts->have_posts()):
-                    $posts->the_post();
+                if ($posts->have_posts()) {
+                    while( $posts->have_posts()) {
+                        $posts->the_post();
+                        echo '<div class="item col-md-3 col-sm-6 col-xs-12">';
+                        get_template_part('template-parts/post/content-list-table', get_post_format());
+                        echo '</div><!-- item -->';
+                    }
+
+                }
                 ?>
-                    <div class="item col-md-3 col-xs-6">
-                        <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-                            <?php
-                                if(has_post_thumbnail()) echo '<div class="post-image"><a href="'.get_permalink().'" class="thumb resize">'.get_the_post_thumbnail(get_the_ID(), 'medium').'</a></div>';
-                            ?>
-                            <div class="article-content">
-                                <header class="entry-header">
-                                    <?php the_title('<h3 class="entry-title"><a href="'.esc_url(get_permalink()).'" rel="bookmark">', '</a></h3>'); ?>
-                                </header><!-- .entry-header -->
-                                <div class="entry-meta small clearfix">
-                                    <strong class="hidden"><span class="vcard author"><span class="fn"><?php the_author() ?></span></span></strong>
-                                    <i><?php _the_entry_date() ?></i>
-                                    <span class="hidden">
-                                        | <span class="post-terms"><span class="item"><?php the_category('</span><span class="term-item">, '); ?></span></span> <span class="post-tags"><?php the_tags(' | '); ?></span>
-                                    </span>
-                                </div><!-- entry-meta -->
-                                <div class="entry-content">
-                                    <?php the_excerpt(); ?>
-                                </div><!-- .entry-content -->
-                                <div class="readmore text-right"><a href="<?php the_permalink() ?>"><i class="fa fa-angle-right"></i> <?php _e('Read more') ?></a></div>
-                            </div>
-                        </article><!-- #post-## -->
-                    </div>
-                <?php
-                endwhile;
-                endif; ?>
             </div><!-- .new_box_widget_# -->
         </section>
         <?php
@@ -309,8 +289,14 @@ class TextmultiBox extends WP_Widget {
     function widget( $args, $instance ) {
         extract($args);
         $wid = 'widget_' . $widget_id;
+        $title = get_field('title', $wid);
         if( have_rows('text_multi', $wid) ) { ?>
             <section class="myblock widget <?= $wid ?>">
+                <?php if($title) { ?>
+                    <div class="widget-header">
+                        <h2 class="widget-title heading"><?= $title ?></h2>
+                    </div>
+                <?php } ?>
                 <div class="inner row">
                     <?php
                     while ( have_rows('text_multi', $wid) )  {
@@ -320,7 +306,7 @@ class TextmultiBox extends WP_Widget {
                     ?>
                         <div class="item col-xs-12">
                             <div class="textbox-intro-inner">
-                                <?php if($title) { ?><h2 class="textbox-title"><?= $title ?></h2><?php } ?>
+                                <?php if($title) { ?><h3 class="textbox-title"><?= $title ?></h3><?php } ?>
                                 <div class="textbox-desc"><?= $description ?></div>
                             </div>
                         </div>
